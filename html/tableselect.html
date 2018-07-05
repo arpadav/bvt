@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html>
+<body>
+    <style>
+        #container { position: relative; }
+        .canvas { position: absolute; top: 0; left: 0; }
+    </style>
+    <!-- <script src="//mozilla.github.io/pdf.js/build/pdf.js"></script> -->
+    <script src="./js/pdf.js/build/pdf.js"></script>
+
+    <p>BVT PDF Table selector</p>
+
+    <form action="upload" method="post">
+        <button type="submit">Upload another file</button>
+    </form>
+
+    <form action="viewfile" method="post">
+        <button type="submit">View Raw PDF</button><br>
+    </form>
+
+    <div id="container">
+        <canvas class="canvas" id="pdfrender" height="0" width="0" style="border:1px solid #000000;"></canvas>
+        <script type="text/javascript" src="./js/pdfrender.js"></script>
+
+        <canvas class="canvas" id="rectselect" height="0" width="0" style="border:1px solid #000000;"></canvas>
+        <script type="text/javascript" src="./js/rectselect.js"></script>
+    </div>
+</body>
+</html>
