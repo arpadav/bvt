@@ -8,10 +8,11 @@ var fdb = require('formidable');
 //var pdfworker = require('../node_modules/pdf.js/src/pdf.worker.js');
 
 var host = 3000;
-var initpath = 'init.json'
-var listpath = './js/pdflist.json'
+var initpath = 'init.json';
+var listpath = './js/pdflist.json';
+var tagpath = './js/tag.json';
 
-console.log("Hosting on localhost:" + host);
+console.log('Hosting on localhost:' + host);
 
 app.get('/', function(req, res){
 	init();
@@ -32,7 +33,7 @@ app.post('/viewfile', function(req, res){
 	//opens file as PDF from new file path
 	fs.readFile(getListPath(), function (err, data){
 		if (err) throw err;
-		res.contentType("application/pdf");
+		res.contentType('application/pdf');
 		res.send(data);
 	});
 });
@@ -56,26 +57,41 @@ app.post('/tableselect', function(req, res){
 		}else{ //if file DOES end in .pdf
 			//rewrite file path to any new directory
 			var list = JSON.parse(fs.readFileSync(listpath).toString());
-			var newpath = './pdfs/' + files.fileToUpload.name;
+			var ctag = JSON.parse(fs.readFileSync(tagpath).toString());
+			var newpath = './pdfs/' + files.fileToUpload.name.replace(/\s+/g,"");
 
-			if (!exists(newpath, list['pdfs'])){
+			if (!exists(newpath, list["pdfs"])[0]){
 				fs.rename(oldpath, newpath, function(err){
 					if (err) throw err;
 				});
 				getFile(newpath, 0);
 
-				try {
-					var tag = list['pdfs'][list['pdfs'].length - 1].tag + 1;
-				} catch {
-					var tag = 1;
-				}
-				list['pdfs'].push({"tag": tag, "path": newpath});
+				var tag = list["pdfs"].length + 1;
+				list["pdfs"].push({"tag": tag, "path": newpath});
+				ctag.tag = tag;
+
 				fs.writeFile(listpath, JSON.stringify(list, null, 4), function(err){
 					if (err) throw err;
-					console.log('Updated with ' + newpath)
+					console.log('Updated with ' + newpath);
+				});
+				fs.writeFile(tagpath, JSON.stringify(ctag, null, 4), function(err){
+					if (err) throw err;
+					console.log('Updated current tag.');
+				});
+				app.get(newpath.substr(1), function(req, res){
+					fs.readFile(newpath, function(err, data){
+						if (err) throw err;
+						res.end(data);
+					});
+				});
+			}else{
+				var tag = exists(newpath, list["pdfs"])[1] + 1
+				ctag.tag = tag;
+				fs.writeFile(tagpath, JSON.stringify(ctag, null, 4), function(err){
+					if (err) throw err;
+					console.log('Updated current tag.');
 				});
 			}
-
 			fs.readFile('./html/tableselect.html', function(err, data){
 				if (err) throw err;
 				res.end(data);
@@ -90,14 +106,14 @@ function init(){
 	var initdata = JSON.parse(fs.readFileSync(initpath).toString());
 
 	initdata["GET"].forEach(function(obj, i){
-		fs.readdir("." + obj.cdir, function(err, files){
+		fs.readdir(obj.cdir, function(err, files){
 			files.forEach(function(file, index){
-				if (file.split('.').pop() == "pdf"){
-					list['pdfs'].push({"tag": tag, "path": "." + obj.cdir + "/" + file});
+				if (file.split('.').pop() == 'pdf'){
+					list["pdfs"].push({"tag": tag, "path": obj.cdir + '/' + file});
 					tag++;
 				}
-				app.get(obj.cdir + "/" + file, function(req, res){
-					fs.readFile("." + obj.cdir + "/" + file, function(err, data){
+				app.get(obj.cdir.substr(1) + '/' + file, function(req, res){
+					fs.readFile(obj.cdir + '/' + file, function(err, data){
 						if (err) throw err;
 						res.end(data);
 					});
@@ -114,10 +130,10 @@ function exists(pathName, list){
 	var i = null;
 	for (i = 0; list.length > i; i++) {
 		if (list[i].path === pathName) {
-			return true;
+			return [true, i];
 		}
 	}
-	return false;
+	return [false, i];
 };
 
 function getFile(atpath, wait) {
@@ -131,5 +147,6 @@ function getFile(atpath, wait) {
 
 function getListPath(){
 	var list = JSON.parse(fs.readFileSync(listpath).toString());
-	return list["pdfs"][list["pdfs"].length - 1].path;
+	var tag = JSON.parse(fs.readFileSync(tagpath).toString());
+	return list["pdfs"][tag.tag - 1].path;
 };

@@ -1,15 +1,15 @@
 {
     "GET": [
         {
-            "cdir": "/pdfs",
+            "cdir": "./pdfs",
             "log": "Initializing GET for all current PDFs..."
         },
         {
-            "cdir": "/js",
+            "cdir": "./js",
             "log": "Initializing GET for all js files..."
         },
         {
-            "cdir": "/js/pdf.js/build",
+            "cdir": "./js/pdf.js/build",
             "log": "Initializing GET for all pdf.js files..."
         }
     ]

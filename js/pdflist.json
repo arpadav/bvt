@@ -1,16 +1,4 @@
 {
     "pdfs": [
-        {
-            "tag": 1,
-            "path": "./pdfs/midterm.pdf"
-        },
-        {
-            "tag": 2,
-            "path": "./pdfs/studentid.pdf"
-        },
-        {
-            "tag": 3,
-            "path": "./pdfs/test.pdf"
-        }
     ]
 }
