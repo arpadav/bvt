@@ -72,7 +72,7 @@ app.post('/tableselect', function(req, res){
 
 				fs.writeFile(listpath, JSON.stringify(list, null, 4), function(err){
 					if (err) throw err;
-					console.log('Updated with ' + newpath);
+					console.log('Updated list with ' + newpath);
 				});
 				fs.writeFile(tagpath, JSON.stringify(ctag, null, 4), function(err){
 					if (err) throw err;

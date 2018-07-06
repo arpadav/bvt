@@ -12,8 +12,9 @@ function initrect() {
 }
 
 function mouseDown(e) {
-  rect.startX = e.pageX - this.offsetLeft;
-  rect.startY = e.pageY - this.offsetTop;
+  rect.startX = e.pageX - e.srcElement.parentElement.offsetLeft;
+  console.log(e);
+  rect.startY = e.pageY - e.srcElement.parentElement.offsetTop;
   drag = true;
 }
 
@@ -23,8 +24,8 @@ function mouseUp() {
 
 function mouseMove(e) {
   if (drag) {
-    rect.w = (e.pageX - this.offsetLeft) - rect.startX;
-    rect.h = (e.pageY - this.offsetTop) - rect.startY;
+    rect.w = (e.pageX - e.srcElement.parentElement.offsetLeft) - rect.startX;
+    rect.h = (e.pageY - e.srcElement.parentElement.offsetTop) - rect.startY;
     ctx.clearRect(0, 0, canvas.width, canvas.height);
     draw();
   }

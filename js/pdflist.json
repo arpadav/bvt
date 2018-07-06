@@ -1,4 +1,16 @@
 {
     "pdfs": [
+        {
+            "tag": 1,
+            "path": "./pdfs/200STryonOM-Cushman_Wakefield.pdf"
+        },
+        {
+            "tag": 2,
+            "path": "./pdfs/test.pdf"
+        },
+        {
+            "tag": 3,
+            "path": "./pdfs/MonroeBusinessPark.pdf"
+        }
     ]
 }
