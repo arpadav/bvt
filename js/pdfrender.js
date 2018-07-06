@@ -14,7 +14,7 @@ function showPDF(url){
         var num = pdf.numPages;
         num = 1; //rendering only first one for now, if i render all it will render on same cavnas
         // for (i = 1; i <= num; i++){
-        pdf.getPage(1).then(function(page) {
+        pdf.getPage(num).then(function(page) {
             console.log('Page loaded');
 
             var scale = 1.5;

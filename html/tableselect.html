@@ -5,11 +5,14 @@
         #container { position: relative; }
         .canvas { position: absolute; }
     </style>
-    <!-- <script src="//mozilla.github.io/pdf.js/build/pdf.js"></script> -->
     <script src="./js/pdf.js/build/pdf.js"></script>
 
     <p>BVT PDF Table selector</p>
-
+    <p>Coordinates used in testing: </p>
+    <p id="top">Top: 0</p>
+    <p id="left">Left: 0</p>
+    <p id="bottom">Bottom: 0</p>
+    <p id="right">Right: 0</p>
     <form action="upload" method="post">
         <button type="submit">Upload another file</button>
     </form>
@@ -25,5 +28,6 @@
         <canvas class="canvas" id="rectselect" height="0" width="0" style="border:1px solid #000000;"></canvas>
         <script type="text/javascript" src="./js/rectselect.js"></script>
     </div>
+
 </body>
 </html>

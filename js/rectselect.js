@@ -3,6 +3,8 @@ var canvas = document.getElementById('rectselect'),
     rect = {},
     drag = false;
 
+var scale = 1.5;
+
 initrect();
 
 function initrect() {
@@ -32,8 +34,34 @@ function mouseMove(e) {
 }
 
 function draw() {
+  [up, left, bottom, right] = getCoords();
+  document.getElementById('top').innerHTML = "Top: " + up;
+  document.getElementById('left').innerHTML = "Left: " + left;
+  document.getElementById('bottom').innerHTML = "Bottom: " + bottom;
+  document.getElementById('right').innerHTML = "Right: " + right;
+
   ctx.beginPath();
   ctx.rect(rect.startX, rect.startY, rect.w, rect.h);
   ctx.stroke();
   ctx.closePath();
+}
+
+function getCoords(){
+    // goes up, left, bottom, right
+    // have to be called UP not TOP because TOP is a window property
+    if (rect.h > 0){
+        var up = rect.startY;
+        var bottom = (rect.startY + rect.h);
+    }else{
+        var up = (rect.startY + rect.h);
+        var bottom = rect.startY;
+    }
+    if (rect.w > 0){
+        var left = rect.startX;
+        var right = (rect.startX + rect.w);
+    }else{
+        var left = (rect.startX + rect.w);
+        var right = rect.startX;
+    }
+    return [up/scale, left/scale, bottom/scale, right/scale];
 }

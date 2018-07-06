@@ -1,4 +1,8 @@
 {
     "pdfs": [
+        {
+            "tag": 1,
+            "path": "./pdfs/test.pdf"
+        }
     ]
 }
