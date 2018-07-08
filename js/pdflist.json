@@ -6,6 +6,10 @@
         },
         {
             "tag": 2,
+            "path": "./pdfs/Cushman_WakefieldOM.pdf"
+        },
+        {
+            "tag": 3,
             "path": "./pdfs/test.pdf"
         }
     ]

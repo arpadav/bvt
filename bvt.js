@@ -1,16 +1,14 @@
 const express = require('express');
 const app = express();
 
-var fs = require('fs');
-var path = require('path');
-var fdb = require('formidable');
+const fs = require('fs');
+const path = require('path');
+const fdb = require('formidable');
 
-var host = 3000;
-var initpath = 'init.json';
-var listpath = './js/pdflist.json';
-var tagpath = './js/tag.json';
-
-console.log('Hosting on localhost:' + host);
+const host = 3000;
+const initpath = 'init.json';
+const listpath = './js/pdflist.json';
+const tagpath = './js/tag.json';
 
 app.get('/', function(req, res){
 	init();
@@ -18,7 +16,9 @@ app.get('/', function(req, res){
 		if (err) throw err;
 		res.end(data);
 	});
-}).listen(host);
+}).listen(host, function(){
+	console.log('Server starting on localhost:' + host);
+});
 
 app.post('/upload', function(req, res){
 	fs.readFile('./html/upload.html', function(err, data){

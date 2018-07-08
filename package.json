@@ -4,7 +4,7 @@
   "description": "BVT PDF to CSV",
   "main": "bvt.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "start": "node bvt"
   },
   "repository": {
     "type": "git",
@@ -19,5 +19,11 @@
   "bugs": {
     "url": "https://github.com/arpadav/bvt/issues"
   },
-  "homepage": "https://github.com/arpadav/bvt#readme"
+  "homepage": "https://github.com/arpadav/bvt#readme",
+  "dependencies": {
+    "express": "^4.16.3",
+    "formidable": "^1.2.1",
+    "pug": "^2.0.3",
+    "tabula-js": "^1.0.1"
+  }
 }
