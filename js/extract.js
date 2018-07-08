@@ -1,6 +1,6 @@
 const tabula = require('tabula-js');
 
-function extract(){
+function none(){
     var up = document.getElementById('top').innerHTML;
     var left = document.getElementById('left').innerHTML;
     var bottom = document.getElementById('bottom').innerHTML;

@@ -1,0 +1,14 @@
+.header {
+    background-color: #FFEA70;
+    text-align: center;
+    padding: 5px;
+}
+
+.footer {
+    background-color: #FFEA70;
+    text-align: center;
+    bottom: 0;
+    width: 100%;
+    position: fixed;
+    /* position: relative; */
+}

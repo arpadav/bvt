@@ -1,2 +1,6 @@
-#container { position: relative; }
-.canvas { position: absolute; }
+#container {
+    position: relative;
+}
+.canvas {
+    position: absolute;
+}

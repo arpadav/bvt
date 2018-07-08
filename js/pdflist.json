@@ -2,15 +2,13 @@
     "pdfs": [
         {
             "tag": 1,
-            "path": "./pdfs/4200SouthBlvdOM.pdf"
+            "path": "./pdfs/4200SouthBlvdOM.pdf",
+            "name": "4200SouthBlvdOM"
         },
         {
             "tag": 2,
-            "path": "./pdfs/Cushman_WakefieldOM.pdf"
-        },
-        {
-            "tag": 3,
-            "path": "./pdfs/test.pdf"
+            "path": "./pdfs/test.pdf",
+            "name": "test"
         }
     ]
 }

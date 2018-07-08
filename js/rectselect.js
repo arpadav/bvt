@@ -13,7 +13,6 @@ function initrect() {
 
 function mouseDown(e) {
     rect.startX = e.pageX - e.srcElement.parentElement.offsetLeft;
-    console.log(e);
     rect.startY = e.pageY - e.srcElement.parentElement.offsetTop;
     drag = true;
 }
@@ -32,12 +31,6 @@ function mouseMove(e) {
 }
 
 function draw() {
-    [up, left, bottom, right] = getCoords();
-    document.getElementById('top').innerHTML = up;
-    document.getElementById('left').innerHTML = left;
-    document.getElementById('bottom').innerHTML = bottom;
-    document.getElementById('right').innerHTML = right;
-
     ctx.beginPath();
     ctx.rect(rect.startX, rect.startY, rect.w, rect.h);
     ctx.stroke();
@@ -63,3 +56,14 @@ function getCoords(){
     }
     return [up/scale, left/scale, bottom/scale, right/scale];
 }
+//
+// function extract(){
+//     xh = new XMLHttpRequest();
+//     xh.open('POST', '/download', true);
+//     xh.onreadystatechange = function () {
+//         if (xh.readyState == 4 && xh.status == 200) {
+//         }
+//     };
+//     // xh.send(getCoords());
+//     xh.send('AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAa');
+// }

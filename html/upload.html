@@ -6,9 +6,11 @@
 </head>
 <body>
     <p>BVT PDF Uploader</p>
-    <form action="tableselect" method="post" enctype="multipart/form-data">
+    <p id="err"><p>
+    <form name="pdf" action="tableselect" onsubmit="return ispdf()" method="post" enctype="multipart/form-data">
         <input type="file" name="fileToUpload"><br>
         <input type="submit">
     </form>
+    <script type="text/javascript" src="./js/ispdf.js"></script>
 </body>
 </html>

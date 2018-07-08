@@ -21,6 +21,7 @@
   },
   "homepage": "https://github.com/arpadav/bvt#readme",
   "dependencies": {
+    "ejs": "^2.6.1",
     "express": "^4.16.3",
     "formidable": "^1.2.1",
     "tabula-js": "^1.0.1"
