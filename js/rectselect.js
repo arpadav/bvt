@@ -1,49 +1,47 @@
 var canvas = document.getElementById('rectselect'),
-    ctx = canvas.getContext('2d'),
-    rect = {},
-    drag = false;
-
-var scale = 1.5;
+ctx = canvas.getContext('2d'),
+rect = {},
+drag = false;
 
 initrect();
 
 function initrect() {
-  canvas.addEventListener('mousedown', mouseDown, false);
-  canvas.addEventListener('mouseup', mouseUp, false);
-  canvas.addEventListener('mousemove', mouseMove, false);
+    canvas.addEventListener('mousedown', mouseDown, false);
+    canvas.addEventListener('mouseup', mouseUp, false);
+    canvas.addEventListener('mousemove', mouseMove, false);
 }
 
 function mouseDown(e) {
-  rect.startX = e.pageX - e.srcElement.parentElement.offsetLeft;
-  console.log(e);
-  rect.startY = e.pageY - e.srcElement.parentElement.offsetTop;
-  drag = true;
+    rect.startX = e.pageX - e.srcElement.parentElement.offsetLeft;
+    console.log(e);
+    rect.startY = e.pageY - e.srcElement.parentElement.offsetTop;
+    drag = true;
 }
 
 function mouseUp() {
-  drag = false;
+    drag = false;
 }
 
 function mouseMove(e) {
-  if (drag) {
-    rect.w = (e.pageX - e.srcElement.parentElement.offsetLeft) - rect.startX;
-    rect.h = (e.pageY - e.srcElement.parentElement.offsetTop) - rect.startY;
-    ctx.clearRect(0, 0, canvas.width, canvas.height);
-    draw();
-  }
+    if (drag) {
+        rect.w = (e.pageX - e.srcElement.parentElement.offsetLeft) - rect.startX;
+        rect.h = (e.pageY - e.srcElement.parentElement.offsetTop) - rect.startY;
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        draw();
+    }
 }
 
 function draw() {
-  [up, left, bottom, right] = getCoords();
-  document.getElementById('top').innerHTML = "Top: " + up;
-  document.getElementById('left').innerHTML = "Left: " + left;
-  document.getElementById('bottom').innerHTML = "Bottom: " + bottom;
-  document.getElementById('right').innerHTML = "Right: " + right;
+    [up, left, bottom, right] = getCoords();
+    document.getElementById('top').innerHTML = up;
+    document.getElementById('left').innerHTML = left;
+    document.getElementById('bottom').innerHTML = bottom;
+    document.getElementById('right').innerHTML = right;
 
-  ctx.beginPath();
-  ctx.rect(rect.startX, rect.startY, rect.w, rect.h);
-  ctx.stroke();
-  ctx.closePath();
+    ctx.beginPath();
+    ctx.rect(rect.startX, rect.startY, rect.w, rect.h);
+    ctx.stroke();
+    ctx.closePath();
 }
 
 function getCoords(){

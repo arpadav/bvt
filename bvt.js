@@ -4,8 +4,6 @@ const app = express();
 var fs = require('fs');
 var path = require('path');
 var fdb = require('formidable');
-//var pdf = require('../node_modules/pdf.js/src/pdf.js');
-//var pdfworker = require('../node_modules/pdf.js/src/pdf.worker.js');
 
 var host = 3000;
 var initpath = 'init.json';
@@ -58,7 +56,7 @@ app.post('/tableselect', function(req, res){
 			//rewrite file path to any new directory
 			var list = JSON.parse(fs.readFileSync(listpath).toString());
 			var ctag = JSON.parse(fs.readFileSync(tagpath).toString());
-			var newpath = './pdfs/' + files.fileToUpload.name.replace(/\s+/g,"");
+			var newpath = './pdfs/' + files.fileToUpload.name.replace(/\s+/g,"").replace(/\(+/g,"").replace(/\)+/g,"");
 
 			if (!exists(newpath, list["pdfs"])[0]){
 				fs.rename(oldpath, newpath, function(err){
@@ -102,11 +100,13 @@ app.post('/tableselect', function(req, res){
 
 function init(){
 	var list = JSON.parse('{"pdfs": []}');
+	var tags = JSON.parse('{"tag": 0}');
 	var tag = 1;
 	var initdata = JSON.parse(fs.readFileSync(initpath).toString());
 
 	initdata["GET"].forEach(function(obj, i){
 		fs.readdir(obj.cdir, function(err, files){
+			console.log(obj.log);
 			files.forEach(function(file, index){
 				if (file.split('.').pop() == 'pdf'){
 					list["pdfs"].push({"tag": tag, "path": obj.cdir + '/' + file});
@@ -123,6 +123,9 @@ function init(){
 				if (err) throw err;
 			});
 		});
+	});
+	fs.writeFile(tagpath, JSON.stringify(tags, null, 4), function(err){
+		if (err) throw err;
 	});
 };
 

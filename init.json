@@ -11,6 +11,10 @@
         {
             "cdir": "./js/pdf.js/build",
             "log": "Initializing GET for all pdf.js files..."
+        },
+        {
+            "cdir": "./css",
+            "log": "Initializing GET for all CSS files..."
         }
     ]
 }

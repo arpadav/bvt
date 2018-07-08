@@ -1,0 +1,23 @@
+{
+  "name": "bvt",
+  "version": "1.0.0",
+  "description": "BVT PDF to CSV",
+  "main": "bvt.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/arpadav/bvt.git"
+  },
+  "keywords": [
+    "bvt",
+    "tabula"
+  ],
+  "author": "Arpad Voros",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/arpadav/bvt/issues"
+  },
+  "homepage": "https://github.com/arpadav/bvt#readme"
+}

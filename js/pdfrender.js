@@ -2,22 +2,18 @@
 var pdfjsLib = window['pdfjs-dist/build/pdf'];
 // pdfjsLib.GlobalWorkerOptions.workerSrc = '//mozilla.github.io/pdf.js/build/pdf.worker.js';
 // Asynchronous download of PDF
+const scale = 1.5;
 
 getURL(handleURL);
 
 function showPDF(url){
     var loadingTask = pdfjsLib.getDocument(url);
     loadingTask.promise.then(function(pdf) {
-        console.log('PDF loaded');
-
         var i = null;
         var num = pdf.numPages;
         num = 1; //rendering only first one for now, if i render all it will render on same cavnas
         // for (i = 1; i <= num; i++){
         pdf.getPage(num).then(function(page) {
-            console.log('Page loaded');
-
-            var scale = 1.5;
             var viewport = page.getViewport(scale);
 
             // Prepare canvas using PDF page dimensions
@@ -32,10 +28,9 @@ function showPDF(url){
                 canvasContext: context,
                 viewport: viewport
             };
+            
             var renderTask = page.render(renderContext);
             renderTask.then(function () {
-                console.log('Page rendered');
-
                 var rectselect = document.getElementById('rectselect');
                 rectselect.height = canvas.height;
                 rectselect.width = canvas.width;

@@ -2,6 +2,10 @@
     "pdfs": [
         {
             "tag": 1,
+            "path": "./pdfs/4200SouthBlvdOM.pdf"
+        },
+        {
+            "tag": 2,
             "path": "./pdfs/test.pdf"
         }
     ]
