@@ -31,6 +31,12 @@ function mouseMove(e) {
 }
 
 function draw() {
+    [up, left, bottom, right] = getCoords();
+
+    document.getElementById('top').innerHTML = up;
+    document.getElementById('left').innerHTML = left;
+    document.getElementById('bottom').innerHTML = bottom;
+    document.getElementById('right').innerHTML = right;
     ctx.beginPath();
     ctx.rect(rect.startX, rect.startY, rect.w, rect.h);
     ctx.stroke();
