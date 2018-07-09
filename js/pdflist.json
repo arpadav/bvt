@@ -1,14 +1,4 @@
 {
     "pdfs": [
-        {
-            "tag": 1,
-            "path": "./pdfs/4200SouthBlvdOM.pdf",
-            "name": "4200SouthBlvdOM"
-        },
-        {
-            "tag": 2,
-            "path": "./pdfs/test.pdf",
-            "name": "test"
-        }
     ]
 }
