@@ -28,7 +28,7 @@ function showPDF(url){
                 canvasContext: context,
                 viewport: viewport
             };
-            
+
             var renderTask = page.render(renderContext);
             renderTask.then(function () {
                 var rectselect = document.getElementById('rectselect');
@@ -43,6 +43,8 @@ function showPDF(url){
     });
 }
 
+//GETs local file from pdflist.JSON
+//use MONGODB INSTEAD
 function getURL(handleURL){
     loadJSON('./js/pdflist.json', function(list){
         loadJSON('./js/tag.json', function(tag){
@@ -60,6 +62,8 @@ function handleURL (err, url) {
   else showPDF(url);
 }
 
+
+//loads JSON using XMLHttpRequest, use MONGODB INSTEAD
 function loadJSON(path, success, error){
     var xhr = new XMLHttpRequest();
     xhr.onreadystatechange = function(){

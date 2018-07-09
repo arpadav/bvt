@@ -1,15 +1,21 @@
 const express = require('express');
 const app = express();
+const host = 3000;
 
 const fs = require('fs');
 const path = require('path');
 const fdb = require('formidable');
+const mongoose = require('mongoose');
+mongoose.connect('mongodb://localhost:27017/nodebvt', {useNewUrlParser: true});
+//27017 for now, MONGODB should have fix soon
 
-const host = 3000;
+let db = mongoose.connection;
+
 const initpath = 'init.json';
 const listpath = './js/pdflist.json';
 const tagpath = './js/tag.json';
 
+//display homepage
 app.get('/', function(req, res){
 	init();
 	template('./html/home.html', req, res);
@@ -17,10 +23,13 @@ app.get('/', function(req, res){
 	console.log('Server starting on localhost:' + host);
 });
 
+//display upload page
 app.post('/upload', function(req, res){
 	template('./html/upload.html', req, res);
 });
 
+//views current file
+//change currentFileProperties() to fetch from MONGODB INSTEAD
 app.post('/viewfile', function(req, res){
 	//opens file as PDF from new file path
 	fs.readFile(currentFileProperties().path, function (err, data){
@@ -30,6 +39,9 @@ app.post('/viewfile', function(req, res){
 	});
 });
 
+
+//table selector
+//use MONGODB INSTEAD to update pdflist.json and tag.json
 app.post('/tableselect', function(req, res){
 	//take incoming form (from submit button in upload.html)
 	var form = fdb.IncomingForm();
@@ -45,7 +57,6 @@ app.post('/tableselect', function(req, res){
 				if (err) throw err;
 			});
 			// isFile(newpath, 0);
-
 			var tag = list["pdfs"].length + 1;
 			list["pdfs"].push({"tag": tag, "path": newpath, "name": files.fileToUpload.name.replace(/\s+/g,"").replace(/\(+/g,"").replace(/\)+/g,"").split('.')[0]});
 			ctag.tag = tag;
@@ -76,6 +87,8 @@ app.post('/tableselect', function(req, res){
 	});
 });
 
+//trying to download CSV using tabula-js
+//get info from MONGODB ISTEAD
 app.post('/download', function(req, res){
 	var form = fdb.IncomingForm();
 	console.log(form);
@@ -93,6 +106,9 @@ app.post('/download', function(req, res){
 	// });
 });
 
+//initializes GET and changes pdflist.JSON
+//easier way to do get than this...
+//initialize with MONGODB INSTEAD
 function init(){
 	var list = JSON.parse('{"pdfs": []}');
 	var tags = JSON.parse('{"tag": 0}');
@@ -124,6 +140,8 @@ function init(){
 	});
 };
 
+//checks pdflist.JSON
+//put inside MONGODB INSTEAD
 function exists(pathName, list){
 	var i = null;
 	for (i = 0; list.length > i; i++) {
@@ -134,12 +152,16 @@ function exists(pathName, list){
 	return [false, i];
 };
 
+//gets current files from pdflist.JSON
+//put inside of MONGODB INSTEAD
 function currentFileProperties(){
 	var list = JSON.parse(fs.readFileSync(listpath).toString());
 	var tag = JSON.parse(fs.readFileSync(tagpath).toString());
 	return list["pdfs"][tag.tag - 1];
 };
 
+//for now, writing templates as such
+//LEARN EJS and use INSTEAD of this
 function template(htmlpath, req, res){
 	fs.readFile(htmlpath, function(err, data){
 		if (err) throw err;
