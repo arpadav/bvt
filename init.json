@@ -13,7 +13,7 @@
             "log": "Initializing GET for all pdf.js files..."
         },
         {
-            "cdir": "./css",
+            "cdir": "./views/css",
             "log": "Initializing GET for all CSS files..."
         }
     ]
