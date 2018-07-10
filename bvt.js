@@ -5,9 +5,13 @@ const app = express();
 // set app to render ejs
 app.set('view engine', 'ejs');
 
+// host
+const host = 3000;
+
 // set up mongo database
+const mydb = 'nodebvt';
 const mongoose = require('mongoose');
-mongoose.connect('mongodb://localhost:27017/nodebvt', {useNewUrlParser: true}); //27017 for now, MONGODB should have fix soon
+mongoose.connect('mongodb://localhost:27017/' + mydb, {useNewUrlParser: true}); //27017 for now, MONGODB should have fix soon
 let db = mongoose.connection;
 
 // check for DB errors
@@ -17,11 +21,12 @@ db.on('error', function(err){
 
 // check DB connection
 db.once('open', function(){
-	console.log('Connected to MongoDB (nodebvt).');
+	console.log('Connected to MongoDB (' + mydb + ').');
 });
 
-// host
-const host = 3000;
+// bring in DB models
+let PDFList = require('./models/pdflist');
+let CTag = require('./models/ctag');
 
 // additional requirements
 const fs = require('fs');
@@ -32,9 +37,6 @@ const fdb = require('formidable');
 const initpath = 'init.json';
 const listpath = './js/pdflist.json';
 const tagpath = './js/tag.json';
-
-// bring in DB models
-let PDFList = require('./models/pdflist');
 
 //display homepage
 app.get('/', function(req, res){
@@ -49,9 +51,8 @@ app.post('/upload', function(req, res){
 	PDFList.find({}, function(err, list){
 		if (err) throw err;
 		else {
-			console.log(list);
 			res.render('pages/upload', {
-				pdfs: list[0].name
+				pdfs: list
 			});
 		}
 	});
@@ -67,7 +68,6 @@ app.post('/viewfile', function(req, res){
 		res.send(data);
 	});
 });
-
 
 //table selector
 //use MONGODB INSTEAD to update pdflist.json and tag.json
@@ -87,6 +87,8 @@ app.post('/tableselect', function(req, res){
 			});
 			// isFile(newpath, 0);
 			var tag = list["pdfs"].length + 1;
+			addPDF(tag, newpath, files.fileToUpload.name.replace(/\s+/g,"").replace(/\(+/g,"").replace(/\)+/g,"").split('.')[0]);
+
 			list["pdfs"].push({"tag": tag, "path": newpath, "name": files.fileToUpload.name.replace(/\s+/g,"").replace(/\(+/g,"").replace(/\)+/g,"").split('.')[0]});
 			ctag.tag = tag;
 
@@ -112,7 +114,14 @@ app.post('/tableselect', function(req, res){
 				console.log('Updated current tag.');
 			});
 		}
-		res.render('pages/tableselect');
+		PDFList.find({}, function(err, list){
+			if (err) throw err;
+			else {
+				res.render('pages/tableselect', {
+					pdfs: list
+				});
+			}
+		});
 	});
 });
 
@@ -139,6 +148,8 @@ app.post('/download', function(req, res){
 //easier way to do get than this...
 //initialize with MONGODB INSTEAD
 function init(){
+	db.collection('pdflist').remove({});
+	db.collection('ctag').remove({});
 	var list = JSON.parse('{"pdfs": []}');
 	var tags = JSON.parse('{"tag": 0}');
 	var tag = 1;
@@ -149,13 +160,10 @@ function init(){
 			console.log(obj.log);
 			files.forEach(function(file, index){
 				if (file.split('.').pop() == 'pdf'){
-					new PDFList({
-						tag: tag,
-						path: obj.cdir + '/' + file,
-						name: file.split('.')[0],
-						selections: []
-					});
 					list["pdfs"].push({"tag": tag, "path": obj.cdir + '/' + file, "name": file.split('.')[0]});
+					addPDF(tag,
+						obj.cdir + '/' + file,
+						file.split('.')[0]);
 					tag++;
 				}
 				app.get(obj.cdir.substr(1) + '/' + file, function(req, res){
@@ -194,6 +202,18 @@ function currentFileProperties(){
 	var tag = JSON.parse(fs.readFileSync(tagpath).toString());
 	return list["pdfs"][tag.tag - 1];
 };
+
+function addPDF(tag, path, name){
+	let pdfitem = new PDFList({
+		tag: tag,
+		path: path,
+		name: name,
+		selections: []
+	});
+	pdfitem.save(function(err){
+		if (err) throw err;
+	});
+}
 
 // function isFile(atpath, wait) {
 // 	console.log('PDF uploaded successfully to: ' + atpath);
