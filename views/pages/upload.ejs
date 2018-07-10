@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html lang = "en">
+    <head>
+        <meta charset="utf-8" />
+        <title>BVT</title>
+    </head>
+    <body>
+        <header>
+            <% include ../partials/header %>
+        </header>
+        <p>BVT PDF Uploader</p>
+        <p id="err"><p>
+        <form name="pdf" action="tableselect" onsubmit="return ispdf()" method="post" enctype="multipart/form-data">
+            <input type="file" name="fileToUpload"><br>
+            <input type="submit">
+        </form>
+        <script src="./js/ispdf.js" type="text/javascript"></script>
+        <footer>
+            <% include ../partials/footer %>
+        </footer>
+    </body>
+</html>

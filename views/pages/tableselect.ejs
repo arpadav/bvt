@@ -1,9 +1,14 @@
 <!DOCTYPE html>
 <html>
     <head>
-        <link rel="stylesheet" type="text/css" href="./css/tsstyle.css">
+        <link rel="stylesheet" type="text/css" href="./views/css/tsstyle.css">
+        <meta charset="utf-8" />
+        <title>BVT</title>
     </head>
     <body>
+        <header>
+            <% include ../partials/header %>
+        </header>
         <script src="./js/pdf.js/build/pdf.js"></script>
         <!-- <template> -->
         <p id="top">0</p>
@@ -32,5 +37,8 @@
             <canvas class="canvas" id="rectselect" height="0" width="0" style="border:1px solid #000000;"></canvas>
             <script type="text/javascript" src="./js/rectselect.js"></script>
         </div>
+        <footer>
+            <% include ../partials/footer %>
+        </footer>
     </body>
 </html>
