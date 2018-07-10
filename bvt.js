@@ -1,5 +1,6 @@
 const express = require('express');
 const app = express();
+app.set('view engine', 'ejs');
 const host = 3000;
 
 const fs = require('fs');
@@ -18,14 +19,14 @@ const tagpath = './js/tag.json';
 //display homepage
 app.get('/', function(req, res){
 	init();
-	template('./html/home.html', req, res);
+	res.render('pages/home');
 }).listen(host, function(){
 	console.log('Server starting on localhost:' + host);
 });
 
 //display upload page
 app.post('/upload', function(req, res){
-	template('./html/upload.html', req, res);
+	res.render('pages/upload');
 });
 
 //views current file
@@ -83,7 +84,7 @@ app.post('/tableselect', function(req, res){
 				console.log('Updated current tag.');
 			});
 		}
-		template('./html/tableselect.html', req, res);
+		res.render('pages/tableselect');
 	});
 });
 
@@ -152,30 +153,13 @@ function exists(pathName, list){
 	return [false, i];
 };
 
-//gets current files from pdflist.JSON
+//gets current files from pdflist.JSONN
 //put inside of MONGODB INSTEAD
 function currentFileProperties(){
 	var list = JSON.parse(fs.readFileSync(listpath).toString());
 	var tag = JSON.parse(fs.readFileSync(tagpath).toString());
 	return list["pdfs"][tag.tag - 1];
 };
-
-//for now, writing templates as such
-//LEARN EJS and use INSTEAD of this
-function template(htmlpath, req, res){
-	fs.readFile(htmlpath, function(err, data){
-		if (err) throw err;
-		fs.readFile('./html/temphead.html', function(err, head){
-			if (err) throw err;
-			fs.readFile('./html/tempfoot.html', function(err, foot){
-				if (err) throw err;
-				res.write(head);
-				res.write(data);
-				res.end(foot);
-			});
-		});
-	});
-}
 
 // function isFile(atpath, wait) {
 // 	console.log('PDF uploaded successfully to: ' + atpath);
