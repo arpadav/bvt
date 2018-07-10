@@ -1,20 +1,40 @@
+// require express for app
 const express = require('express');
 const app = express();
+
+// set app to render ejs
 app.set('view engine', 'ejs');
+
+// set up mongo database
+const mongoose = require('mongoose');
+mongoose.connect('mongodb://localhost:27017/nodebvt', {useNewUrlParser: true}); //27017 for now, MONGODB should have fix soon
+let db = mongoose.connection;
+
+// check for DB errors
+db.on('error', function(err){
+	console.log(err);
+});
+
+// check DB connection
+db.once('open', function(){
+	console.log('Connected to MongoDB (nodebvt).');
+});
+
+// host
 const host = 3000;
 
+// additional requirements
 const fs = require('fs');
 const path = require('path');
 const fdb = require('formidable');
-const mongoose = require('mongoose');
-mongoose.connect('mongodb://localhost:27017/nodebvt', {useNewUrlParser: true});
-//27017 for now, MONGODB should have fix soon
 
-let db = mongoose.connection;
-
+// paths (list and tag path to be deleted once DB is set up)
 const initpath = 'init.json';
 const listpath = './js/pdflist.json';
 const tagpath = './js/tag.json';
+
+// bring in DB models
+let PDFList = require('./models/pdflist');
 
 //display homepage
 app.get('/', function(req, res){
@@ -26,7 +46,15 @@ app.get('/', function(req, res){
 
 //display upload page
 app.post('/upload', function(req, res){
-	res.render('pages/upload');
+	PDFList.find({}, function(err, list){
+		if (err) throw err;
+		else {
+			console.log(list);
+			res.render('pages/upload', {
+				pdfs: list[0].name
+			});
+		}
+	});
 });
 
 //views current file
@@ -121,6 +149,12 @@ function init(){
 			console.log(obj.log);
 			files.forEach(function(file, index){
 				if (file.split('.').pop() == 'pdf'){
+					new PDFList({
+						tag: tag,
+						path: obj.cdir + '/' + file,
+						name: file.split('.')[0],
+						selections: []
+					});
 					list["pdfs"].push({"tag": tag, "path": obj.cdir + '/' + file, "name": file.split('.')[0]});
 					tag++;
 				}
