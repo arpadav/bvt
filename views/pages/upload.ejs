@@ -9,7 +9,9 @@
             <% include ../partials/header %>
         </header>
         <p>BVT PDF Uploader</p>
-        <p><%= pdfs%></p>
+
+        <% include ../partials/list %>
+
         <p id="err"><p>
         <form name="pdf" action="tableselect" onsubmit="return ispdf()" method="post" enctype="multipart/form-data">
             <input type="file" name="fileToUpload"><br>
