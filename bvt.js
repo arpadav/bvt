@@ -26,7 +26,6 @@ db.once('open', function(){
 
 // bring in DB models
 let PDFList = require('./models/pdflist');
-let CTag = require('./models/ctag');
 
 // additional requirements
 const fs = require('fs');
@@ -58,14 +57,19 @@ app.post('/upload', function(req, res){
 	});
 });
 
-//views current file
-//change currentFileProperties() to fetch from MONGODB INSTEAD
+// views current file
+// change currentFileProperties() to fetch from MONGODB INSTEAD
 app.post('/viewfile', function(req, res){
-	//opens file as PDF from new file path
-	fs.readFile(currentFileProperties().path, function (err, data){
+	let tag = JSON.parse(fs.readFileSync(tagpath).toString());
+	PDFList.find({tag: tag.tag}, function(err, list){
 		if (err) throw err;
-		res.contentType('application/pdf');
-		res.send(data);
+	 	else {
+			fs.readFile(list[0].path, function (err, data){
+				if (err) throw err;
+				res.contentType('application/pdf');
+				res.send(data);
+			});
+		}
 	});
 });
 
@@ -128,16 +132,6 @@ app.post('/tableselect', function(req, res){
 //trying to download CSV using tabula-js
 //get info from MONGODB ISTEAD
 app.post('/download', function(req, res){
-	var form = fdb.IncomingForm();
-	console.log(form);
-	// form.parse(req, function(err, fields, files){
-	// 	console.log(fields);
-	// 	console.log(files);
-	// });
-
-	// var coords = req.query;
-	// console.log(coords);
-	// console.log(req.query);
 	// fs.writeFile('./csvs/' + currentFileProperties().name + '.csv', data, function (err){
 	// 	if (err) throw err;
 	// 	res.pipe(data);
@@ -149,9 +143,8 @@ app.post('/download', function(req, res){
 //initialize with MONGODB INSTEAD
 function init(){
 	db.collection('pdflist').remove({});
-	db.collection('ctag').remove({});
 	var list = JSON.parse('{"pdfs": []}');
-	var tags = JSON.parse('{"tag": 0}');
+	var tags = JSON.parse('{"tag": 1}');
 	var tag = 1;
 	var initdata = JSON.parse(fs.readFileSync(initpath).toString());
 
@@ -195,13 +188,17 @@ function exists(pathName, list){
 	return [false, i];
 };
 
-//gets current files from pdflist.JSONN
+//gets current files from pdflist.JSON
 //put inside of MONGODB INSTEAD
-function currentFileProperties(){
-	var list = JSON.parse(fs.readFileSync(listpath).toString());
-	var tag = JSON.parse(fs.readFileSync(tagpath).toString());
-	return list["pdfs"][tag.tag - 1];
-};
+// function currentFileProperties(){
+// 	let tag = JSON.parse(fs.readFileSync(tagpath).toString());
+// 	PDFList.find({tag: tag.tag}, function(err, list){
+// 		if (err) throw err;
+// 		list[0];
+// 	});
+// 	// var list = JSON.parse(fs.readFileSync(listpath).toString());
+// 	// return list["pdfs"][tag.tag - 1];
+// };
 
 function addPDF(tag, path, name){
 	let pdfitem = new PDFList({
@@ -212,6 +209,16 @@ function addPDF(tag, path, name){
 	});
 	pdfitem.save(function(err){
 		if (err) throw err;
+	});
+}
+
+function addSelection(coords){
+	let tag = JSON.parse(fs.readFileSync(tagpath).toString());
+	PDFList.find({tag: tag.tag}, function(err, list){
+		if (err) throw err;
+	 	else {
+			list[0].selection.push = coords;
+		}
 	});
 }
 
