@@ -47,6 +47,7 @@ app.get('/', function(req, res){
 
 //display upload page
 app.post('/upload', function(req, res){
+	initPDFList(); //deleting list and moving on before finishing initialization
 	PDFList.find({}, function(err, list){
 		if (err) throw err;
 		else {
@@ -74,6 +75,7 @@ app.post('/viewfile', function(req, res){
 //table selector
 //use MONGODB INSTEAD to update pdflist.json and tag.json
 app.post('/tableselect', function(req, res){
+	initPDFList();
 	//take incoming form (from submit button in upload.html)
 	var form = fdb.IncomingForm();
 	form.parse(req, function(err, fields, files){
@@ -91,7 +93,6 @@ app.post('/tableselect', function(req, res){
 			PDFList.find({}, function(err, list){
 				if (err) throw err;
 				else {
-					console.log(list);
 					var tag = list.length + 1;
 					ctag.tag = tag;
 
@@ -109,6 +110,10 @@ app.post('/tableselect', function(req, res){
 							res.end(data);
 						});
 					});
+
+					res.render('pages/tableselect', {
+						pdfs: list
+					});
 				}
 			});
 		} else {
@@ -120,17 +125,13 @@ app.post('/tableselect', function(req, res){
 						if (err) throw err;
 						console.log('Updated current tag.');
 					});
+
+					res.render('pages/tableselect', {
+						pdfs: list
+					});
 				}
 			});
 		}
-		PDFList.find({}, function(err, list){
-			if (err) throw err;
-			else {
-				res.render('pages/tableselect', {
-					pdfs: list
-				});
-			}
-		});
 	});
 });
 
@@ -143,25 +144,17 @@ app.post('/download', function(req, res){
 	// });
 });
 
-//initializes GET and changes pdflist.JSON
+//initializes GET and changes pdflist in database
 //easier way to do get than this...
-//initialize with MONGODB INSTEAD
 function init(){
-	db.collection('pdflist').remove({});
-	var tags = JSON.parse('{"tag": 1}');
-	var tag = 1;
+	initPDFList();
+
 	var initdata = JSON.parse(fs.readFileSync(initpath).toString());
 
 	initdata["GET"].forEach(function(obj, i){
 		fs.readdir(obj.cdir, function(err, files){
 			console.log(obj.log);
 			files.forEach(function(file, index){
-				if (file.split('.').pop() == 'pdf'){
-					addPDF(tag,
-						obj.cdir + '/' + file,
-						file.split('.')[0]);
-					tag++;
-				}
 				app.get(obj.cdir.substr(1) + '/' + file, function(req, res){
 					fs.readFile(obj.cdir + '/' + file, function(err, data){
 						if (err) throw err;
@@ -171,10 +164,32 @@ function init(){
 			});
 		});
 	});
+};
+
+function initPDFList(){
+	db.collection('pdflist').remove({});
+
+	var initdata = JSON.parse(fs.readFileSync(initpath).toString());
+	var tags = JSON.parse('{"tag": 1}');
+	var tag = 1;
+
+	initdata["PDFList"].forEach(function(obj, i){
+		fs.readdir(obj.cdir, function(err, files){
+			console.log(obj.log);
+			files.forEach(function(file, index){
+				if (file.split('.').pop() == 'pdf'){
+					addPDF(tag,
+						obj.cdir + '/' + file,
+						file.split('.')[0]);
+					tag++;
+				}
+			});
+		});
+	});
 	fs.writeFile(tagpath, JSON.stringify(tags, null, 4), function(err){
 		if (err) throw err;
 	});
-};
+}
 
 //checks pdflist in database
 function exists(pathName){
