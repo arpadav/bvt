@@ -79,41 +79,48 @@ app.post('/tableselect', function(req, res){
 	form.parse(req, function(err, fields, files){
 		//find path of the file being uploaded
 		var oldpath = files.fileToUpload.path;
-		var list = JSON.parse(fs.readFileSync(listpath).toString());
-		var ctag = JSON.parse(fs.readFileSync(tagpath).toString());
 		var newpath = './pdfs/' + files.fileToUpload.name.replace(/\s+/g,"").replace(/\(+/g,"").replace(/\)+/g,"");
+
+		var ctag = JSON.parse(fs.readFileSync(tagpath).toString());
 
 		if (!exists(newpath)){
 			fs.rename(oldpath, newpath, function(err){
 				if (err) throw err;
 			});
-			// isFile(newpath, 0);
-			var tag = list["pdfs"].length + 1;
-			addPDF(tag, newpath, files.fileToUpload.name.replace(/\s+/g,"").replace(/\(+/g,"").replace(/\)+/g,"").split('.')[0]);
 
-			list["pdfs"].push({"tag": tag, "path": newpath, "name": files.fileToUpload.name.replace(/\s+/g,"").replace(/\(+/g,"").replace(/\)+/g,"").split('.')[0]});
-			ctag.tag = tag;
+			PDFList.find({}, function(err, list){
+				if (err) throw err;
+				else {
+					console.log(list);
+					var tag = list.length + 1;
+					ctag.tag = tag;
 
-			fs.writeFile(listpath, JSON.stringify(list, null, 4), function(err){
-				if (err) throw err;
-				console.log('Updated list with ' + newpath);
+					addPDF(tag, newpath, files.fileToUpload.name.replace(/\s+/g,"").replace(/\(+/g,"").replace(/\)+/g,"").split('.')[0]);
+					console.log('Updated list with ' + newpath);
+
+					fs.writeFile(tagpath, JSON.stringify(ctag, null, 4), function(err){
+						if (err) throw err;
+						console.log('Updated current tag.');
+					});
+
+					app.get(newpath.substr(1), function(req, res){
+						fs.readFile(newpath, function(err, data){
+							if (err) throw err;
+							res.end(data);
+						});
+					});
+				}
 			});
-			fs.writeFile(tagpath, JSON.stringify(ctag, null, 4), function(err){
+		} else {
+			PDFList.find({}, function(err, list){
 				if (err) throw err;
-				console.log('Updated current tag.');
-			});
-			app.get(newpath.substr(1), function(req, res){
-				fs.readFile(newpath, function(err, data){
-					if (err) throw err;
-					res.end(data);
-				});
-			});
-		}else{
-			var tag = exists(newpath, list["pdfs"])[1] + 1
-			ctag.tag = tag;
-			fs.writeFile(tagpath, JSON.stringify(ctag, null, 4), function(err){
-				if (err) throw err;
-				console.log('Updated current tag.');
+				else {
+					ctag.tag = list.length + 1;
+					fs.writeFile(tagpath, JSON.stringify(ctag, null, 4), function(err){
+						if (err) throw err;
+						console.log('Updated current tag.');
+					});
+				}
 			});
 		}
 		PDFList.find({}, function(err, list){
@@ -141,7 +148,6 @@ app.post('/download', function(req, res){
 //initialize with MONGODB INSTEAD
 function init(){
 	db.collection('pdflist').remove({});
-	var list = JSON.parse('{"pdfs": []}');
 	var tags = JSON.parse('{"tag": 1}');
 	var tag = 1;
 	var initdata = JSON.parse(fs.readFileSync(initpath).toString());
@@ -151,7 +157,6 @@ function init(){
 			console.log(obj.log);
 			files.forEach(function(file, index){
 				if (file.split('.').pop() == 'pdf'){
-					list["pdfs"].push({"tag": tag, "path": obj.cdir + '/' + file, "name": file.split('.')[0]});
 					addPDF(tag,
 						obj.cdir + '/' + file,
 						file.split('.')[0]);
@@ -163,9 +168,6 @@ function init(){
 						res.end(data);
 					});
 				});
-			});
-			fs.writeFile(listpath, JSON.stringify(list, null, 4), function(err){
-				if (err) throw err;
 			});
 		});
 	});
@@ -180,9 +182,9 @@ function exists(pathName){
 		if (err) throw err;
 		else {
 			if (list.length == 0) {
-				return [false, 0];
+				return false;
 			} else {
-				return [true, list.tag - 1];
+				return true;
 			}
 		}
 	});
@@ -222,13 +224,3 @@ function addPDF(tag, path, name){
 		if (err) throw err;
 	});
 }
-
-/* function isFile(atpath, wait) {
-	console.log('PDF uploaded successfully to: ' + atpath);
-	const timeout = setInterval(function() {
-		if (fs.existsSync(atpath)) {
-			clearInterval(timeout);
-		}
-	}, wait);
-};
-*/
