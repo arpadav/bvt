@@ -16,5 +16,11 @@
             "cdir": "./views/css",
             "log": "Initializing GET for all CSS files..."
         }
+    ],
+    "PDFList": [
+        {
+            "cdir": "./pdfs",
+            "log": "Updating PDFList..."
+        }
     ]
 }
