@@ -83,7 +83,7 @@ app.post('/tableselect', function(req, res){
 		var ctag = JSON.parse(fs.readFileSync(tagpath).toString());
 		var newpath = './pdfs/' + files.fileToUpload.name.replace(/\s+/g,"").replace(/\(+/g,"").replace(/\)+/g,"");
 
-		if (!exists(newpath, list["pdfs"])[0]){
+		if (!exists(newpath)){
 			fs.rename(oldpath, newpath, function(err){
 				if (err) throw err;
 			});
@@ -174,36 +174,39 @@ function init(){
 	});
 };
 
-//checks pdflist.JSON
-//put inside MONGODB INSTEAD
-function exists(pathName, list){
-	var i = null;
-	for (i = 0; list.length > i; i++) {
-		if (list[i].path === pathName) {
-			return [true, i];
+//checks pdflist in database
+function exists(pathName){
+	PDFList.find({path: pathName}, function(err, list){
+		if (err) throw err;
+		else {
+			if (list.length == 0) {
+				return [false, 0];
+			} else {
+				return [true, list.tag - 1];
+			}
 		}
-	}
-	return [false, i];
+	});
 };
 
-//gets current files from pdflist.JSON
-//put inside of MONGODB INSTEAD
-function currentFileProperties(callback){
+//gets current file properties from database
+function currentFileProperties(cb){
 	let tag = JSON.parse(fs.readFileSync(tagpath).toString());
 	PDFList.find({tag: tag.tag}, function(err, list){
 		if (err) throw err;
-		callback(list[0]);
+		else {
+			cb(list[0]);
+		}
 	});
 	// var list = JSON.parse(fs.readFileSync(listpath).toString());
 	// return list["pdfs"][tag.tag - 1];
 };
 
-function addSelection(coords, callback){
+function addSelection(coords, cb){
 	let tag = JSON.parse(fs.readFileSync(tagpath).toString());
 	PDFList.find({tag: tag.tag}, function(err, list){
 		if (err) throw err;
 	 	else {
-			callback(list[0].selection.push(coords));
+			cb(list[0].selection.push(coords));
 		}
 	});
 }
