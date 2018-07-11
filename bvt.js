@@ -60,16 +60,14 @@ app.post('/upload', function(req, res){
 // views current file
 // change currentFileProperties() to fetch from MONGODB INSTEAD
 app.post('/viewfile', function(req, res){
-	let tag = JSON.parse(fs.readFileSync(tagpath).toString());
-	PDFList.find({tag: tag.tag}, function(err, list){
-		if (err) throw err;
-	 	else {
-			fs.readFile(list[0].path, function (err, data){
-				if (err) throw err;
-				res.contentType('application/pdf');
-				res.send(data);
-			});
-		}
+	currentFileProperties(function(fileProperties){
+		// perfect example of callback. REFERENCE!!!!!
+		// have access to variable INSIDE function
+		fs.readFile(fileProperties.path, function (err, data){
+			if (err) throw err;
+			res.contentType('application/pdf');
+			res.send(data);
+		});
 	});
 });
 
@@ -190,15 +188,25 @@ function exists(pathName, list){
 
 //gets current files from pdflist.JSON
 //put inside of MONGODB INSTEAD
-// function currentFileProperties(){
-// 	let tag = JSON.parse(fs.readFileSync(tagpath).toString());
-// 	PDFList.find({tag: tag.tag}, function(err, list){
-// 		if (err) throw err;
-// 		list[0];
-// 	});
-// 	// var list = JSON.parse(fs.readFileSync(listpath).toString());
-// 	// return list["pdfs"][tag.tag - 1];
-// };
+function currentFileProperties(callback){
+	let tag = JSON.parse(fs.readFileSync(tagpath).toString());
+	PDFList.find({tag: tag.tag}, function(err, list){
+		if (err) throw err;
+		callback(list[0]);
+	});
+	// var list = JSON.parse(fs.readFileSync(listpath).toString());
+	// return list["pdfs"][tag.tag - 1];
+};
+
+function addSelection(coords, callback){
+	let tag = JSON.parse(fs.readFileSync(tagpath).toString());
+	PDFList.find({tag: tag.tag}, function(err, list){
+		if (err) throw err;
+	 	else {
+			callback(list[0].selection.push(coords));
+		}
+	});
+}
 
 function addPDF(tag, path, name){
 	let pdfitem = new PDFList({
@@ -212,21 +220,12 @@ function addPDF(tag, path, name){
 	});
 }
 
-function addSelection(coords){
-	let tag = JSON.parse(fs.readFileSync(tagpath).toString());
-	PDFList.find({tag: tag.tag}, function(err, list){
-		if (err) throw err;
-	 	else {
-			list[0].selection.push = coords;
+/* function isFile(atpath, wait) {
+	console.log('PDF uploaded successfully to: ' + atpath);
+	const timeout = setInterval(function() {
+		if (fs.existsSync(atpath)) {
+			clearInterval(timeout);
 		}
-	});
-}
-
-// function isFile(atpath, wait) {
-// 	console.log('PDF uploaded successfully to: ' + atpath);
-// 	const timeout = setInterval(function() {
-// 		if (fs.existsSync(atpath)) {
-// 			clearInterval(timeout);
-// 		}
-// 	}, wait);
-// };
+	}, wait);
+};
+*/
