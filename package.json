@@ -4,7 +4,7 @@
   "description": "BVT PDF to CSV",
   "main": "bvt.js",
   "scripts": {
-    "start": "nodemon bvt -i ./js"
+    "start": "nodemon bvt -w C:/Users/Arpad/nodeBVTTest/bvt -i ./js"
   },
   "repository": {
     "type": "git",
