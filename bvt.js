@@ -264,11 +264,12 @@ function getList(cb){
 }
 
 function CSVData(name, path, selection, cb){
+	console.log(name);
+	console.log(path);
+	console.log(selection);
 	const t = tabula(path, {area: selection.top + "," + selection.left + "," + selection.bottom + "," + selection.right});
 	t.extractCsv(function (err, data){
-		console.log(path);
 		console.log(data);
-		console.log(selection);
 		let csvContent = "";
 		data.forEach(function(row, i){
 			csvContent += row.replace(/�/g, '').replace(/\r/g, '').replace(/"/g, '') + "\r\n";
