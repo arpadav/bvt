@@ -1,7 +1,7 @@
-var canvas = document.getElementById('rectselect'),
-ctx = canvas.getContext('2d'),
-rect = {},
-drag = false;
+var canvas = document.getElementById('rectselect');
+var ctx = canvas.getContext('2d');
+var rect = {};
+var drag = false;
 
 initrect();
 
@@ -32,11 +32,15 @@ function mouseMove(e) {
 
 function draw() {
     [up, left, bottom, right] = getCoords();
+    // document.getElementById('top').innerHTML = up;
+    // document.getElementById('left').innerHTML = left;
+    // document.getElementById('bottom').innerHTML = bottom;
+    // document.getElementById('right').innerHTML = right;
 
-    document.getElementById('top').innerHTML = up;
-    document.getElementById('left').innerHTML = left;
-    document.getElementById('bottom').innerHTML = bottom;
-    document.getElementById('right').innerHTML = right;
+    // document.getElementById('extract').action = 'extract?top=' + up + '&left=' + left + '&bottom=' + bottom + '&right=' + right;
+
+    document.getElementById('extract').action = 'extract?top=253&left=18&bottom=634&right=368';
+
     ctx.beginPath();
     ctx.rect(rect.startX, rect.startY, rect.w, rect.h);
     ctx.stroke();
