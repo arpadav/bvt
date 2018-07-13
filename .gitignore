@@ -1,4 +1,5 @@
 *.pdf
+*.csv
 node_modules/
 tabweb/
 package-lock.json
