@@ -124,17 +124,18 @@ app.post('/tableselect', function(req, res, next){
 //trying to download CSV using tabula-js
 app.post('/extract', function(req, res){
 	// var q = url.parse(req.url, true).query;
-	currentFileProperties(function(fileProperties){
-		addSelection({top: req.query.top,
-			left: req.query.left,
-			bottom: req.query.bottom,
-			right: req.query.right},
-			function(cont){
-			if (cont) showCSVData(fileProperties.name, fileProperties.path, fileProperties.selections[0], function(data){
-				// res.render('pages/tableselect', {
-				// 	csvdata: data
-				// });
-			});
+	addSelection({top: req.query.top,
+		left: req.query.left,
+		bottom: req.query.bottom,
+		right: req.query.right},
+		function(cont){
+			currentFileProperties(function(fileProperties){
+				console.log(fileProperties);
+				if (cont) showCSVData(fileProperties.name, fileProperties.path, fileProperties.selections[0], res, function(data){
+					// res.render('pages/tableselect', {
+					// 	csvdata: data
+					// });
+				});
 		});
 	});
 });
@@ -241,20 +242,19 @@ function currentFileProperties(cb){
 // not yet implemented
 function addSelection(coords, cb){
 	let tag = JSON.parse(fs.readFileSync(tagpath).toString());
-	console.log(coords);
-	console.log(tag.tag);
 	PDFList.find({tag: tag.tag}, function(err, list){
 		if (err) throw err;
 		else{
-			console.log(list);
 		 	list[0].selections.push(coords);
-			console.log(coords);
-			cb(true);
+			list[0].save(function(err){
+				if (err) throw err;
+				cb(true);
+			});
 		}
 	});
 }
 
-function showCSVData(name, path, selection, cb){
+function showCSVData(name, path, selection, res, cb){
 	const t = tabula(path, {area: selection.top + "," + selection.left + "," + selection.bottom + "," + selection.right});
 	t.extractCsv(function (err, data){
 		let csvContent = "";
@@ -263,10 +263,7 @@ function showCSVData(name, path, selection, cb){
 			if (i == data.length - 1){
 				fs.writeFile('./csvs/' + name + '.csv', csvContent, function (err){
 					if (err) throw err;
-					else{
-						console.log(csvContent);
-						res.download('./csvs/' + name + '.csv');
-					}
+					res.download('./csvs/' + name + '.csv');
 				});
 			}
 		});
