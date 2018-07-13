@@ -41,7 +41,7 @@ const tagpath = './js/tag.json';
 
 //display homepage
 app.get('/', function(req, res, next){
-	initPDFList(function(cont){
+	initPDFList(req, function(cont){
 		if (cont) next();
 	});
 }, function(req, res){
@@ -53,7 +53,7 @@ app.get('/', function(req, res, next){
 
 //display upload page
 app.post('/upload', function(req, res, next){
-	initPDFList(function(cont){
+	initPDFList(req, function(cont){
 		if (cont) next();
 	});
 }, function(req, res){
@@ -82,7 +82,7 @@ app.post('/viewfile', function(req, res){
 //table selector
 //use MONGODB INSTEAD to update pdflist.json and tag.json
 app.post('/tableselect', function(req, res, next){
-	initPDFList(function(cont){
+	initPDFList(req, function(cont){
 		if (cont) next();
 	});
 }, function(req, res){
@@ -92,7 +92,7 @@ app.post('/tableselect', function(req, res, next){
 		//find path of the file being uploaded
 		var oldpath = files.fileToUpload.path;
 		var newpath = './pdfs/' + files.fileToUpload.name.replace(/\s+/g,"").replace(/\(+/g,"").replace(/\)+/g,"");
-		var ctag = JSON.parse(fs.readFileSync(tagpath).toString());
+		var ctag = JSON.parse(fs.readFileSync(tagpath));
 
 		exists(newpath, function(exist, tag){
 			if (!exist){
@@ -124,18 +124,16 @@ app.post('/tableselect', function(req, res, next){
 //trying to download CSV using tabula-js
 app.post('/extract', function(req, res){
 	// var q = url.parse(req.url, true).query;
-	addSelection({top: req.query.top,
-		left: req.query.left,
-		bottom: req.query.bottom,
-		right: req.query.right},
-		function(cont){
-			currentFileProperties(function(fileProperties){
-				console.log(fileProperties);
-				if (cont) showCSVData(fileProperties.name, fileProperties.path, fileProperties.selections[0], res, function(data){
-					// res.render('pages/tableselect', {
-					// 	csvdata: data
-					// });
-				});
+	addSelection({top: req.query.top, left: req.query.left, bottom: req.query.bottom, right: req.query.right}, function(cont){
+		currentFileProperties(function(fileProperties){
+			if (cont) CSVData(fileProperties.name, fileProperties.path, fileProperties.selections[0], function(data){
+				if (data) res.download('./csvs/' + fileProperties.name + '.csv');
+				// res.render('pages/tableselect', {
+				// 	csvdata: data,
+				// 	pdfs: list,
+				// 	cpath: fileProperties.path
+				// });
+			});
 		});
 	});
 });
@@ -145,7 +143,7 @@ app.post('/extract', function(req, res){
 // initializes GET
 // must be easier way to do get than this...
 function init(){
-	var initdata = JSON.parse(fs.readFileSync(initpath).toString());
+	var initdata = JSON.parse(fs.readFileSync(initpath));
 
 	initdata["GET"].forEach(function(obj, i){
 		fs.readdir(obj.cdir, function(err, files){
@@ -167,22 +165,26 @@ function tableSelectList(ctag, res){
 	PDFList.find({}, function(err, list){
 		if (err) throw err;
 		fs.writeFile(tagpath, JSON.stringify(ctag, null, 4), function(err){
-			if (err) throw err;
 			console.log('Updated current tag.');
-		});
-		res.render('pages/tableselect', {
-			pdfs: list
+			if (err) throw err;
+			else{
+				currentFileProperties(function(fileProperties){
+					res.render('pages/tableselect', {
+						pdfs: list,
+						cpath: fileProperties.path
+					});
+				});
+			}
 		});
 	});
 }
 
 // initializes pdfs in database
 // updates at (so far) before any page is rendered.
-function initPDFList(cb){
+function initPDFList(req, cb){
 	db.collection('pdflist').remove({});
 
 	var initdata = JSON.parse(fs.readFileSync(initpath).toString());
-	var tags = JSON.parse('{"tag": 1}');
 	var tag = 1;
 
 	initdata["PDFList"].forEach(function(obj, i){
@@ -192,18 +194,18 @@ function initPDFList(cb){
 			files.forEach(function(file, index){
 				if (file.split('.').pop() == 'pdf'){
 					addPDF(tag, obj.cdir + '/' + file, file.split('.')[0], function(cont){
-						if (cont) {
-							if (index == (files.length - 1)) cb(true);
-						}
+						if (cont) if (index == (files.length - 1)) cb(true);
 					});
 					tag++;
 				}
 			});
 		});
 	});
-	fs.writeFile(tagpath, JSON.stringify(tags, null, 4), function(err){
-		if (err) throw err;
-	});
+	if(req.originalUrl === '/'){
+		fs.writeFile(tagpath, JSON.stringify(JSON.parse('{"tag": 1}'), null, 4), function(err){
+			if (err) throw err;
+		});
+	}
 }
 
 // adds a PDF to database
@@ -231,7 +233,7 @@ function exists(pathName, cb){
 
 // gets current file properties from database
 function currentFileProperties(cb){
-	let tag = JSON.parse(fs.readFileSync(tagpath).toString());
+	let tag = JSON.parse(fs.readFileSync(tagpath));
 	PDFList.find({tag: tag.tag}, function(err, list){
 		if (err) throw err;
 		cb(list[0]);
@@ -241,7 +243,7 @@ function currentFileProperties(cb){
 // adds selection coordinates via rectangular selection
 // not yet implemented
 function addSelection(coords, cb){
-	let tag = JSON.parse(fs.readFileSync(tagpath).toString());
+	let tag = JSON.parse(fs.readFileSync(tagpath));
 	PDFList.find({tag: tag.tag}, function(err, list){
 		if (err) throw err;
 		else{
@@ -254,16 +256,26 @@ function addSelection(coords, cb){
 	});
 }
 
-function showCSVData(name, path, selection, res, cb){
+function getList(cb){
+	PDFList.find({}, function(err, list){
+		if (err) throw err;
+		cb(list);
+	});
+}
+
+function CSVData(name, path, selection, cb){
 	const t = tabula(path, {area: selection.top + "," + selection.left + "," + selection.bottom + "," + selection.right});
 	t.extractCsv(function (err, data){
+		console.log(path);
+		console.log(data);
+		console.log(selection);
 		let csvContent = "";
 		data.forEach(function(row, i){
 			csvContent += row.replace(/�/g, '').replace(/\r/g, '').replace(/"/g, '') + "\r\n";
 			if (i == data.length - 1){
 				fs.writeFile('./csvs/' + name + '.csv', csvContent, function (err){
 					if (err) throw err;
-					res.download('./csvs/' + name + '.csv');
+					cb(true);
 				});
 			}
 		});

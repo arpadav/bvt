@@ -37,10 +37,10 @@ function draw() {
     // document.getElementById('bottom').innerHTML = bottom;
     // document.getElementById('right').innerHTML = right;
 
-    // document.getElementById('extract').action = 'extract?top=' + up + '&left=' + left + '&bottom=' + bottom + '&right=' + right;
+    document.getElementById('extract').action = 'extract?top=' + up + '&left=' + left + '&bottom=' + bottom + '&right=' + right;
 
-    document.getElementById('extract').action = 'extract?top=253&left=18&bottom=634&right=368';
-    
+    // document.getElementById('extract').action = 'extract?top=253&left=18&bottom=634&right=368';
+
     ctx.beginPath();
     ctx.rect(rect.startX, rect.startY, rect.w, rect.h);
     ctx.stroke();
@@ -64,7 +64,7 @@ function getCoords(){
         var left = (rect.startX + rect.w);
         var right = rect.startX;
     }
-    return [up/scale, left/scale, bottom/scale, right/scale];
+    return [Math.round(up/scale), Math.round(left/scale), Math.round(bottom/scale), Math.round(right/scale)];
 }
 //
 // function extract(){

@@ -6,6 +6,7 @@
         <title>BVT</title>
     </head>
     <body>
+        <script>const cccpath = '<%= cpath %>';</script>
         <script src="./js/pdf.js/build/pdf.js"></script>
 
         <header>
@@ -28,7 +29,7 @@
             <button type="submit">View Raw PDF</button>
         </form>
 
-        <form id="extract" action="extract?top=253&left=18&bottom=634&right=368" method="post"> <!-- onsubmit="return extract()" hurr durr -->
+        <form id="extract" method="post"> <!-- onsubmit="return extract()" hurr durr -->
             <button type="submit">Extract data and download</button>
         </form>
         <!-- <button onclick="extract()">Extract data (just button)</button> -->
