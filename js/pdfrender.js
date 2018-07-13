@@ -46,9 +46,11 @@ function showPDF(url){
 //GETs local file from pdflist.JSON
 //use MONGODB INSTEAD
 function getURL(handleURL){
-    loadJSON('http://localhost:27017/nodebvt/pdflist', function(list){
+    //loadJSON('http://localhost:27017/nodebvt/pdflist', function(list){
+    loadJSON('./js/pdflist.json', function(list){
         loadJSON('./js/tag.json', function(tag){
-            handleURL(null, list[tag.tag - 1].path.substr(1));
+            console.log(list["pdfs"][tag.tag - 1].path.substr(1));
+            handleURL(null, list["pdfs"][tag.tag - 1].path.substr(1));
         }, function(xhr){
             console.error(xhr);
         });

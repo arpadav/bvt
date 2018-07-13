@@ -40,7 +40,7 @@ function draw() {
     // document.getElementById('extract').action = 'extract?top=' + up + '&left=' + left + '&bottom=' + bottom + '&right=' + right;
 
     document.getElementById('extract').action = 'extract?top=253&left=18&bottom=634&right=368';
-
+    
     ctx.beginPath();
     ctx.rect(rect.startX, rect.startY, rect.w, rect.h);
     ctx.stroke();
