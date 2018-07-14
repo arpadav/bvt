@@ -64,7 +64,11 @@ function getCoords(){
         var left = (rect.startX + rect.w);
         var right = rect.startX;
     }
-    return [Math.round(up/(scale * 10)) * 10, Math.round(left/(scale * 10)) * 10, Math.round(bottom/(scale * 10)) * 10, Math.round(right/(scale * 10)) * 10];
+    return [round(up), round(left), round(bottom), round(right)];
+}
+
+function round(num){
+    return Math.round((num * 100)/scale) / 100;
 }
 //
 // function extract(){
