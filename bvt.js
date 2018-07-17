@@ -268,6 +268,7 @@ function CSVData(name, path, selection, cb){
 	console.log(path);
 	console.log(selection);
 	const t = tabula(path, {area: selection.top + "," + selection.left + "," + selection.bottom + "," + selection.right});
+	console.log(t);
 	t.extractCsv(function (err, data){
 		console.log(data);
 		let csvContent = "";
