@@ -1,10 +1,10 @@
 {
   "name": "bvt",
-  "version": "1.0.0",
+  "version": "0.0.0",
   "description": "BVT PDF to CSV",
-  "main": "bvt.js",
+  "main": "app.js",
   "scripts": {
-    "start": "nodemon bvt -w C:/Users/Arpad/nodeBVTTest/bvt -i ./js"
+    "start": "nodemon bin/www -w C:/Users/Arpad/nodeapps/bvt -i ./js"
   },
   "repository": {
     "type": "git",
@@ -22,6 +22,7 @@
   "homepage": "https://github.com/arpadav/bvt#readme",
   "dependencies": {
     "bootstrap": "^4.1.1",
+    "cookie-parser": "^1.4.3",
     "ejs": "^2.6.1",
     "express": "^4.16.3",
     "formidable": "^1.2.1",

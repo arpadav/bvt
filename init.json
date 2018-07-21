@@ -1,25 +1,7 @@
 {
-    "GET": [
-        {
-            "cdir": "./pdfs",
-            "log": "Initializing GET for all current PDFs..."
-        },
-        {
-            "cdir": "./js",
-            "log": "Initializing GET for all js files..."
-        },
-        {
-            "cdir": "./js/pdf.js/build",
-            "log": "Initializing GET for all pdf.js files..."
-        },
-        {
-            "cdir": "./views/css",
-            "log": "Initializing GET for all CSS files..."
-        }
-    ],
     "PDFList": [
         {
-            "cdir": "./pdfs",
+            "cdir": "user/pdfs",
             "log": "Updating PDFList..."
         }
     ]
