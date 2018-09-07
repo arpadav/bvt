@@ -10,7 +10,7 @@ tagpath = 'public/js/tag.json';
 
 //Set up mongoose connection
 var mongoose = require('mongoose');
-const dbname = 'nodebvt';
+const dbname = 'modus';
 var mongoDB = 'mongodb://localhost:27017/' + dbname;
 // 27017 for now, MONGODB should have fix soon
 // ^^this is a very recent error MONGODB put out, normally the port number '27017'
@@ -37,9 +37,9 @@ PDFList = require('./models/pdflist');
 // init();
 
 // local modules
-database = require('./js/database');
-init = require('./js/init');
-tabula = require('./js/tabula');
+database = require('./src/database');
+init = require('./src/init');
+tabula = require('./src/tabula');
 // currentfile = require('./js/currentfile');
 
 // page routing
